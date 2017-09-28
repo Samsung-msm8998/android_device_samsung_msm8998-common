@@ -1,7 +1,30 @@
-LOCAL_PATH := device/samsung/msm8998-common
 
-# Include path
-TARGET_SPECIFIC_HEADER_PATH := $(LOCAL_PATH)/include
+#
+# Copyright (C) 2017 The LineageOS Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# inherit from the proprietary version
+-include vendor/samsung/msm8998-common/BoardConfigVendor.mk
+
+BOARD_VENDOR := samsung
+COMMON_PATH := device/samsung/msm8998-common
+
+TARGET_SPECIFIC_HEADER_PATH := $(COMMON_PATH)/include
+
+# Use Snapdragon LLVM, if available
+TARGET_USE_SDCLANG := true
 
 # Architecture
 TARGET_ARCH := arm64
@@ -57,26 +80,126 @@ BOARD_HAS_NO_SELECT_BUTTON := true
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 TARGET_USERIMAGES_USE_EXT4 := true
 
-# TWRP
-ifeq ($(RECOVERY_VARIANT),twrp)
-TW_THEME := portrait_hdpi
-RECOVERY_SDCARD_ON_DATA := true
-TARGET_RECOVERY_QCOM_RTC_FIX := true
-TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
-TW_BRIGHTNESS_PATH := "/sys/class/leds/lcd-backlight/brightness"
-TW_MAX_BRIGHTNESS := 36500
-TW_DEFAULT_BRIGHTNESS := 15000
-TW_NO_REBOOT_BOOTLOADER := true
-TW_HAS_DOWNLOAD_MODE := true
-TW_INCLUDE_NTFS_3G := true
-TW_EXCLUDE_SUPERSU := true
-TW_EXCLUDE_DEFAULT_USB_INIT := true
-TW_EXTRA_LANGUAGES := true
-TW_INPUT_BLACKLIST := "hbtp_vm"
-TARGET_RECOVERY_FSTAB := device/samsung/msm8998-common/rootdir/etc/recovery.fstab
-else
-TARGET_RECOVERY_FSTAB := device/samsung/msm8998-common/rootdir/etc/fstab.qcom
-endif
+# ANT+
+BOARD_ANT_WIRELESS_DEVICE := "qualcomm-uart"
 
-# SELinux Policies
-BOARD_SEPOLICY_DIRS := device/samsung/msm8998-common/sepolicy
+# Audio
+TARGET_AUDIOHAL_VARIANT := samsung
+AUDIO_FEATURE_ENABLED_AAC_ADTS_OFFLOAD := true
+AUDIO_FEATURE_ENABLED_ACDB_LICENSE := true
+AUDIO_FEATURE_ENABLED_ALAC_OFFLOAD := true
+AUDIO_FEATURE_ENABLED_ANC_HEADSET := true
+AUDIO_FEATURE_ENABLED_APE_OFFLOAD := true
+AUDIO_FEATURE_ENABLED_AUDIOSPHERE := true
+AUDIO_FEATURE_ENABLED_COMPRESS_VOIP := true
+AUDIO_FEATURE_ENABLED_EXTN_FLAC_DECODER := true
+AUDIO_FEATURE_ENABLED_EXTN_FORMATS := true
+AUDIO_FEATURE_ENABLED_FLUENCE := true
+AUDIO_FEATURE_ENABLED_FM_POWER_OPT := true
+AUDIO_FEATURE_ENABLED_HFP := true
+AUDIO_FEATURE_ENABLED_KPI_OPTIMIZE := true
+AUDIO_FEATURE_ENABLED_MULTI_VOICE_SESSIONS := true
+AUDIO_FEATURE_ENABLED_PCM_OFFLOAD_24 := true
+AUDIO_FEATURE_ENABLED_PCM_OFFLOAD := true
+AUDIO_FEATURE_ENABLED_PROXY_DEVICE := true
+AUDIO_FEATURE_ENABLED_RECORD_PLAY_CONCURRENCY := true
+AUDIO_FEATURE_ENABLED_SOURCE_TRACKING := true
+AUDIO_FEATURE_ENABLED_SPKR_PROTECTION := true
+AUDIO_FEATURE_ENABLED_VBAT_MONITOR := true
+AUDIO_FEATURE_ENABLED_VOICE_CONCURRENCY :=true
+AUDIO_FEATURE_ENABLED_VORBIS_OFFLOAD := true
+AUDIO_FEATURE_ENABLED_WMA_OFFLOAD := true
+AUDIO_USE_LL_AS_PRIMARY_OUTPUT := true
+BOARD_USES_ALSA_AUDIO := true
+USE_CUSTOM_AUDIO_POLICY := 1
+#USE_XML_AUDIO_POLICY_CONF := 1
+
+# Bluetooth
+BOARD_HAVE_BLUETOOTH := true
+BOARD_HAVE_BLUETOOTH_QCOM := true
+BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(DEVICE_PATH)/bluetooth
+BOARD_HAS_QCA_BT_ROME := true
+QCOM_BT_USE_BTNV := true
+QCOM_BT_USE_SMD_TTY := true
+
+# Charger
+BOARD_CHARGER_ENABLE_SUSPEND := true
+
+# CMHW
+BOARD_USES_CYANOGEN_HARDWARE := true
+BOARD_HARDWARE_CLASS += \
+    hardware/cyanogen/cmhw \
+    hardware/samsung/cmhw \
+    $(COMMON_PATH)/cmhw
+
+# Dex
+ifeq ($(HOST_OS),linux)
+  ifneq ($(TARGET_BUILD_VARIANT),eng)
+    ifeq ($(WITH_DEXPREOPT),)
+      WITH_DEXPREOPT := true
+    endif
+  endif
+endif
+WITH_DEXPREOPT_BOOT_IMG_ONLY ?= true
+
+
+# Display
+BOARD_USES_ADRENO := true
+NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
+SF_VSYNC_EVENT_PHASE_OFFSET_NS := 2000000
+TARGET_CONTINUOUS_SPLASH_ENABLED := true
+TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
+TARGET_USES_C2D_COMPOSITION := true
+TARGET_USES_ION := true
+TARGET_USES_OVERLAY := true
+USE_OPENGL_RENDERER := true
+VSYNC_EVENT_PHASE_OFFSET_NS := 6000000
+
+MAX_EGL_CACHE_KEY_SIZE := 12*1024
+MAX_EGL_CACHE_SIZE := 2048*1024
+MAX_VIRTUAL_DISPLAY_DIMENSION := 2048
+
+OVERRIDE_RS_DRIVER:= libRSDriver_adreno.so
+
+# Encryption
+TARGET_HW_DISK_ENCRYPTION := true
+
+# GPS
+USE_DEVICE_SPECIFIC_GPS := true
+USE_DEVICE_SPECIFIC_LOC_API := true
+TARGET_NO_RPC := true
+
+# Init
+TARGET_PLATFORM_DEVICE_BASE := /devices/soc.0/
+
+# Peripheral manager
+TARGET_PER_MGR_ENABLED := true
+
+# Power
+TARGET_POWERHAL_VARIANT := qcom
+
+# Qualcomm
+BOARD_USES_QCOM_HARDWARE := true
+BOARD_USES_QC_TIME_SERVICES := true
+
+# Release tools
+TARGET_RELEASETOOLS_EXTENSIONS := $(COMMON_PATH)
+
+# SELinux
+include device/qcom/sepolicy/sepolicy.mk
+BOARD_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy
+
+# Sensors
+USE_SENSOR_MULTI_HAL := true
+
+# Wifi
+BOARD_HAS_QCOM_WLAN := true
+BOARD_HAS_QCOM_WLAN_SDK := true
+BOARD_HOSTAPD_DRIVER := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_qcwcn
+BOARD_WLAN_DEVICE := qcwcn
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_qcwcn
+WIFI_DRIVER_FW_PATH_AP := "ap"
+WIFI_DRIVER_FW_PATH_STA := "sta"
+WPA_SUPPLICANT_VERSION := VER_0_8_X
